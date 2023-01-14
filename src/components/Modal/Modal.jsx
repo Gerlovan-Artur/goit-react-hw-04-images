@@ -1,32 +1,31 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import style from '../Modal/Modal.module.css';
 
-export class Modal extends Component {
-  componentDidMount = () => {
-    window.addEventListener('keydown', this.handleKeyDown);
-  };
+export function Modal({ closeModal, selectedImg }) {
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  });
 
-  componentWillUnmount = () => {
-    window.removeEventListener('keydown', this.handleKeyDown);
-  };
-
-  handleKeyDown = e => {
+  function handleKeyDown(e) {
     if (e.code === 'Escape') {
-      this.props.closeModal();
+      closeModal();
     }
-  };
-
-  handleBackdrop = e => {
-    if (e.currentTarget === e.target) {
-      this.props.closeModal();
-    }
-  };
-
-  render() {
-    return (
-      <div className={style.overlay} onClick={this.handleBackdrop}>
-        <div className={style.modal}>{this.props.children}</div>
-      </div>
-    );
   }
+
+  function handleBackdrop(e) {
+    if (e.currentTarget === e.target) {
+      closeModal();
+    }
+  }
+
+  return (
+    <div className={style.overlay} onClick={handleBackdrop}>
+      <div className={style.modal}>
+        <img src={selectedImg} alt={selectedImg} />
+      </div>
+    </div>
+  );
 }
